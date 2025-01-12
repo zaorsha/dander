@@ -7,7 +7,7 @@ import webview
 
 # Create main app window
 root = tk.Tk()
-root.title("Dander")
+root.title("DANDER")
 root.geometry("1200x800") # Set window size
 
 # Sidebar for inputs and stats
@@ -63,29 +63,23 @@ def update_distances():
 
 ttk.Button(sidebar, text="Update Distances", command=update_distances).grid(row=7, column=0, columnspan=2, pady=10)
 
-# Starting coordinates of the Appalachian Trail
-start_coords = [34.6268, -83.1955]
-
-# Create map
-m = folium.Map(location=start_coords, zoom_start=6)
-
-# Add marker at start of trail
-folium.Marker(location=start_coords, popup="Start of Trail").add_to(m)
-
-# Add line for the train, below is an example only
+# Add line for the trail, below is an example only
 trail_coords = [
     [34.6268, -83.1955],
     [35.0, 82.7],
     [36.0, 81.5]
 ]
-folium.PolyLine(trail_coords, color="red", weight=2.5, opacity=1).add_to(m)
 
-# Save map to HTML file
-m.save("appalachian_trail.html")
-
-# Map Placeholder
+# Generate Map
 map_view = tkintermapview.TkinterMapView(map_area, width=600, height=600, corner_radius=0)
-map_view.pack()
+
+# Starting coordinates of the Appalachian Trail
+map_view.set_position(34.6268, -83.1955)
+
+# Set zoom level
+map_view.set_zoom(11)
+
+map_view.pack(expand=True, fill="both")
 
 # Run the app
 root.mainloop()
