@@ -74,7 +74,12 @@ trail_coords = [
 map_view = tkintermapview.TkinterMapView(map_area, width=600, height=600, corner_radius=0)
 
 # Starting coordinates of the Appalachian Trail
-map_view.set_position(34.6268, -83.1955)
+map_view.set_position(34.6268, -83.1955, marker=True, text="Start")
+
+# Create path
+# marker_1 = map_view.set_marker("", marker=True)
+# marker_1.set_position(34.6268, -83.1955)
+# marker_1.set_text('Start')
 
 # Set zoom level
 map_view.set_zoom(11)
