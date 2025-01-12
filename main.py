@@ -1,9 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-from tkhtmlview import HTMLLabel
 import tkintermapview
-import folium
-import webview
+import gpxpy
 
 # Create main app window
 root = tk.Tk()
@@ -64,25 +62,40 @@ def update_distances():
 ttk.Button(sidebar, text="Update Distances", command=update_distances).grid(row=7, column=0, columnspan=2, pady=10)
 
 # Add line for the trail, below is an example only
-trail_coords = [
-    [34.6268, -83.1955],
-    [35.0, 82.7],
-    [36.0, 81.5]
-]
+# trail_coords = [
+#     [34.6268, -83.1955],
+#     [35.0, 82.7],
+#     [36.0, 81.5]
+# ]
+
+def load_gpx(file_path):
+    with open(file_path, 'r') as f:
+        gpx = gpxpy.parse(f)
+
+    # Create a list of coordinates from the GPX file
+    trail_coords = []
+    for track in gpx.tracks:
+        for segment in track.segments:
+            for point in segment.points:
+                trail_coords.append([point.latitude, point.longitude])
+
+    # Plot the trail as a polyline on the map
+    map_view.set_path(trail_coords, color='red')
 
 # Generate Map
 map_view = tkintermapview.TkinterMapView(map_area, width=600, height=600, corner_radius=0)
 
 # Starting coordinates of the Appalachian Trail
-map_view.set_position(34.6268, -83.1955, marker=True, text="Start")
+map_view.set_position(34.626652, -84.193899, marker=True, text="Start")
 
 # Create path
 # marker_1 = map_view.set_marker("", marker=True)
 # marker_1.set_position(34.6268, -83.1955)
 # marker_1.set_text('Start')
+load_gpx("appalachian_trail_path.gpx")
 
 # Set zoom level
-map_view.set_zoom(11)
+map_view.set_zoom(13)
 
 map_view.pack(expand=True, fill="both")
 
