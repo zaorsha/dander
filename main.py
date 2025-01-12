@@ -3,6 +3,35 @@ from tkinter import ttk
 import tkintermapview
 import gpxpy
 import math
+import sqlite3
+
+# Create SQLite database
+def init_db():
+    conn = sqlite3.connect('dander.db') # Creates db file if it doesn't exist
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS users (name TEXT, distance REAL)''') # Create table if it doesn't exist
+    conn.commit()
+    conn.close()
+
+# Store distance data
+def store_distance(name, distance):
+    conn = sqlite3.connect('dander.db')
+    c = conn.cursor()
+    c.execute('''INSERT OR REPLACE INTO users (name, distance) VALUES (?, ?)''', (name, distance))
+    conn.commit()
+    conn.close()
+
+# Retrieve distance data
+def get_distance(name):
+    conn = sqlite3.connect('dander.db')
+    c = conn.cursor()
+    c.execute('''SELECT distance FROM users WHERE name=?''', (name,))
+    result = c.fetchone()
+    conn.close()
+    return result[0] if result else 0
+
+# Initialize the database
+init_db()
 
 # Create main app window
 root = tk.Tk()
@@ -48,11 +77,16 @@ def update_distances():
     try:
         user1_new = float(user1_input.get())
         user2_new = float(user2_input.get())
-        current_user1 = float(user1_distance.cget("text").split()[0])
-        current_user2 = float(user2_distance.cget("text").split()[0])
+        # current_user1 = float(user1_distance.cget("text").split()[0])
+        # current_user2 = float(user2_distance.cget("text").split()[0])
+        current_user1 = get_distance("Rebecca")
+        current_user2 = get_distance("Raymond")
 
         user1_distance.config(text=f"{current_user1 + user1_new} km")
         user2_distance.config(text=f"{current_user2 + user2_new} km")
+
+        store_distance("Rebecca", current_user1 + user1_new)
+        store_distance("Raymond", current_user2 + user2_new)
 
         # Clear input fields
         user1_input.delete(0, tk.END)
@@ -145,6 +179,20 @@ def update_map_path(distance_walked):
     map_view.set_path(traveled_coords, color="green")
 
 map_view.pack(expand=True, fill="both")
+
+# On startup, load the saved distances for both users
+user1_distance_value = get_distance('Rebecca')
+user2_distance_value = get_distance('Raymond')
+
+user1_distance.config(text=f"{user1_distance_value} km")
+user2_distance.config(text=f"{user2_distance_value} km")
+
+# Update the map with the user's progress based on stored distances
+if user1_distance_value > 0:
+    update_map_path(user1_distance_value)  # For Rebecca
+
+if user2_distance_value > 0:
+    update_map_path(user2_distance_value)  # For Raymond
 
 # Run the app
 root.mainloop()
