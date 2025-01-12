@@ -3,10 +3,13 @@ Virtual walking app
 
 
 ### To-Do
+---
 
 
 ### Known Bugs
-- Adding distance only works the first time. Subsequent attempts don't generate green path or save to db.
+---
+- Adding distance only works the first time. Subsequent attempts act unexpectedly.
 
 
 ### Changelog
+---
