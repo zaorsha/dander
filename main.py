@@ -77,24 +77,30 @@ def update_distances():
     try:
         user1_new = float(user1_input.get())
         user2_new = float(user2_input.get())
-        # current_user1 = float(user1_distance.cget("text").split()[0])
-        # current_user2 = float(user2_distance.cget("text").split()[0])
+
+        # Get current distance
         current_user1 = get_distance("Rebecca")
         current_user2 = get_distance("Raymond")
 
-        user1_distance.config(text=f"{current_user1 + user1_new} km")
-        user2_distance.config(text=f"{current_user2 + user2_new} km")
+        # Update user distances
+        new_user1_distance = current_user1 + user1_new
+        new_user2_distance = current_user2 + user2_new
 
-        store_distance("Rebecca", current_user1 + user1_new)
-        store_distance("Raymond", current_user2 + user2_new)
+        # Update the labels with new distances
+        user1_distance.config(text=f"{new_user1_distance} km")
+        user2_distance.config(text=f"{new_user2_distance} km")
+
+        # Store the updated distances in the database
+        store_distance("Rebecca", new_user1_distance)
+        store_distance("Raymond", new_user2_distance)
 
         # Clear input fields
         user1_input.delete(0, tk.END)
         user2_input.delete(0, tk.END)
 
-        # Update the map with the new path
-        update_map_path(user1_new)  # For Rebecca
-        update_map_path(user2_new)  # For Raymond
+        # Update the map with the new progress
+        update_map_path(user1_new, user1_distance_value)  # For Rebecca
+        update_map_path(user2_new, user2_distance_value)  # For Raymond
 
     except ValueError:
         print("Invalid input! Please enter numbers.")
@@ -154,9 +160,10 @@ map_view.set_path(trail_coords, color='red')
 map_view.set_zoom(13)
 
 # Function to update the path with green for the user's progress
-def update_map_path(distance_walked):
+# Function to update the path with green for the user's progress
+def update_map_path(distance_walked, previous_distance):
     traveled_coords = []
-    distance_traveled = 0
+    distance_traveled = previous_distance
 
     for i in range(1, len(trail_coords)):
         lat1, lon1 = trail_coords[i - 1]
@@ -166,7 +173,7 @@ def update_map_path(distance_walked):
         segment_distance = haversine(lat1, lon1, lat2, lon2)
         distance_traveled += segment_distance
 
-        if distance_traveled >= distance_walked:
+        if distance_traveled >= distance_walked + previous_distance:
             # Add points to the traveled path (green)
             traveled_coords.append([lat1, lon1])
             break
@@ -189,10 +196,10 @@ user2_distance.config(text=f"{user2_distance_value} km")
 
 # Update the map with the user's progress based on stored distances
 if user1_distance_value > 0:
-    update_map_path(user1_distance_value)  # For Rebecca
+    update_map_path(user1_distance_value, 0)  # For Rebecca
 
 if user2_distance_value > 0:
-    update_map_path(user2_distance_value)  # For Raymond
+    update_map_path(user2_distance_value, 0)  # For Raymond
 
 # Run the app
 root.mainloop()
