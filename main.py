@@ -5,6 +5,9 @@ import gpxpy
 import math
 import sqlite3
 
+################################## DB FUNCTIONS ##################################
+
+
 # Initiating SQLite database at start of program
 conn = sqlite3.connect('dander.db')
 c = conn.cursor()
@@ -27,6 +30,8 @@ def get_distance(name):
 
 # Initialize the database
 init_db()
+
+################################## GUI CREATION ##################################
 
 # Create main app window
 root = tk.Tk()
@@ -70,16 +75,16 @@ user2_input.grid(row=6, column=1, sticky="E")
 # Submit button
 def update_distances():
     try:
-        user1_new = float(user1_input.get())
-        user2_new = float(user2_input.get())
+        user1_new_distance = float(user1_input.get())
+        user2_new_distance = float(user2_input.get())
 
         # Get current distance
-        current_user1 = get_distance("Rebecca")
-        current_user2 = get_distance("Raymond")
+        current_user1_distance = get_distance("Rebecca")
+        current_user2_distance = get_distance("Raymond")
 
         # Update user distances
-        new_user1_distance = current_user1 + user1_new
-        new_user2_distance = current_user2 + user2_new
+        new_user1_distance = current_user1_distance + user1_new_distance
+        new_user2_distance = current_user2_distance + user2_new_distance
 
         # Update the labels with new distances
         user1_distance.config(text=f"{new_user1_distance} km")
@@ -93,9 +98,9 @@ def update_distances():
         user1_input.delete(0, tk.END)
         user2_input.delete(0, tk.END)
 
-        # Update the map with the new progress
-        update_map_path(user1_new, user1_distance_value)  # For Rebecca
-        update_map_path(user2_new, user2_distance_value)  # For Raymond
+        # # Update the map with the new progress
+        # update_map_path(user1_new_distance, user1_distance_value)  # For Rebecca
+        # update_map_path(user2_new_distance, user2_distance_value)  # For Raymond
 
     except ValueError:
         print("Invalid input! Please enter numbers.")
@@ -154,7 +159,6 @@ map_view.set_path(trail_coords, color='red')
 # Set zoom level
 map_view.set_zoom(13)
 
-# Function to update the path with green for the user's progress
 # Function to update the path with green for the user's progress
 def update_map_path(distance_walked, previous_distance):
     traveled_coords = []
