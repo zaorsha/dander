@@ -195,10 +195,10 @@ user2_distance.config(text=f"{user2_distance_value} km")
 
 # Update the map with the user's progress based on stored distances
 if user1_distance_value > 0:
-    update_map_path(user1_distance_value, 0)  # For Rebecca
+    update_map_path(user1_distance_value)  # For Rebecca
 
 if user2_distance_value > 0:
-    update_map_path(user2_distance_value, 0)  # For Raymond
+    update_map_path(user2_distance_value)  # For Raymond
 
 # Run the app
 root.mainloop()
