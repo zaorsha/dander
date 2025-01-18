@@ -5,29 +5,24 @@ import gpxpy
 import math
 import sqlite3
 
+# Initiating SQLite database at start of program
+conn = sqlite3.connect('dander.db')
+c = conn.cursor()
+
 # Create SQLite database
 def init_db():
-    conn = sqlite3.connect('dander.db') # Creates db file if it doesn't exist
-    c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS users (name TEXT, distance REAL)''') # Create table if it doesn't exist
     conn.commit()
-    conn.close()
 
 # Store distance data
 def store_distance(name, distance):
-    conn = sqlite3.connect('dander.db')
-    c = conn.cursor()
     c.execute('''INSERT OR REPLACE INTO users (name, distance) VALUES (?, ?)''', (name, distance))
     conn.commit()
-    conn.close()
 
 # Retrieve distance data
 def get_distance(name):
-    conn = sqlite3.connect('dander.db')
-    c = conn.cursor()
     c.execute('''SELECT distance FROM users WHERE name=?''', (name,))
     result = c.fetchone()
-    conn.close()
     return result[0] if result else 0
 
 # Initialize the database
