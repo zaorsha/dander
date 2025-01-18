@@ -98,9 +98,9 @@ def update_distances():
         user1_input.delete(0, tk.END)
         user2_input.delete(0, tk.END)
 
-        # # Update the map with the new progress
-        # update_map_path(user1_new_distance, user1_distance_value)  # For Rebecca
-        # update_map_path(user2_new_distance, user2_distance_value)  # For Raymond
+        # Update the map with the new progress
+        update_map_path(new_user1_distance)  # For Rebecca
+        update_map_path(new_user2_distance)  # For Raymond
 
     except ValueError:
         print("Invalid input! Please enter numbers.")
@@ -160,9 +160,9 @@ map_view.set_path(trail_coords, color='red')
 map_view.set_zoom(13)
 
 # Function to update the path with green for the user's progress
-def update_map_path(distance_walked, previous_distance):
+def update_map_path(total_distance_walked):
     traveled_coords = []
-    distance_traveled = previous_distance
+    distance_traveled = 0
 
     for i in range(1, len(trail_coords)):
         lat1, lon1 = trail_coords[i - 1]
@@ -172,7 +172,7 @@ def update_map_path(distance_walked, previous_distance):
         segment_distance = haversine(lat1, lon1, lat2, lon2)
         distance_traveled += segment_distance
 
-        if distance_traveled >= distance_walked + previous_distance:
+        if distance_traveled >= total_distance_walked:
             # Add points to the traveled path (green)
             traveled_coords.append([lat1, lon1])
             break
