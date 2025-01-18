@@ -14,7 +14,9 @@ Virtual walking app
 
 ### Known Bugs
 ---
-- Adding distance only works the first time. Subsequent attempts act unexpectedly.
+- Adding distance only works the first time within the distance stats. Subsequent additions act unexpectedly.
+- Route colour only changes after first distance addition
+- Only the initial distance added is committed to the db
 
 
 ### Changelog

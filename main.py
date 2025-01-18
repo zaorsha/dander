@@ -198,3 +198,6 @@ if user2_distance_value > 0:
 
 # Run the app
 root.mainloop()
+
+# Close SQLite db
+conn.close()
