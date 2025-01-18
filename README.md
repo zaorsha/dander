@@ -14,10 +14,12 @@ Virtual walking app
 
 ### Known Bugs
 ---
-- Adding distance only works the first time within the distance stats. Subsequent additions act unexpectedly.
-- Route colour only changes after first distance addition (Fix: route is being coloured from the start, so green is overlapping green)
-- Only the initial distance added is committed to the db
+1. Adding distance only works the first time within the distance stats. Subsequent additions act unexpectedly.
+3. Only the initial distance added is committed to the db
 
 
 ### Changelog
 ---
+##### Version 0.1
+#### Bug Fixes
+2. Route colour only changes after first distance addition (Fix: route is being coloured from the start, so green is overlapping green)
