@@ -51,9 +51,6 @@ def update_distances():
         new_user1_distance = current_user1_distance + user1_new_distance
         new_user2_distance = current_user2_distance + user2_new_distance
 
-        print(f'new user1: {new_user1_distance}')
-        print(f'new user1: {new_user2_distance}')
-
         # Store the updated distances in the database
         store_distance("Rebecca", new_user1_distance)
         store_distance("Raymond", new_user2_distance)
@@ -218,8 +215,6 @@ map_view.pack(expand=True, fill="both")
 # On startup, load the saved distances for both users
 user1_distance_value = get_distance('Rebecca')
 user2_distance_value = get_distance('Raymond')
-print(user1_distance_value)
-print(user2_distance_value)
 
 user1_distance.config(text=f"{user1_distance_value} km")
 user2_distance.config(text=f"{user2_distance_value} km")
@@ -233,7 +228,6 @@ if user2_distance_value > 0:
 
 ttk.Button(sidebar, text="Update Distances", command=update_distances).grid(row=7, column=0, columnspan=2, pady=10)
 ttk.Button(sidebar, text="Reset", command=reset_distances).grid(row=9, column=0, columnspan=2, pady=10)
-
 
 # Run the app
 root.mainloop()
