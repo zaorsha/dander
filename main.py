@@ -7,34 +7,41 @@ import sqlite3
 
 ################################## DB FUNCTIONS ##################################
 
-
-# Initiating SQLite database at start of program
-conn = sqlite3.connect('dander.db')
-c = conn.cursor()
-
 # Create SQLite database
 def init_db():
-    c.execute('''CREATE TABLE IF NOT EXISTS users (name TEXT, distance REAL)''') # Create table if it doesn't exist
+    conn = sqlite3.connect('dander.db')
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            name TEXT PRIMARY KEY,
+            distance REAL
+        )
+    ''')  # Create table with a primary key
     conn.commit()
+    conn.close()
 
 # Store distance data
 def store_distance(name, distance):
-    c.execute('''INSERT OR REPLACE INTO users (name, distance) VALUES (?, ?)''', (name, distance))
-    conn.commit()
+    with sqlite3.connect('dander.db') as conn:
+        c = conn.cursor()
+        c.execute('''INSERT OR REPLACE INTO users (name, distance) VALUES (?, ?)''', (name, distance))
+        conn.commit()
 
 # Retrieve distance data
 def get_distance(name):
-    c.execute('''SELECT distance FROM users WHERE name=?''', (name,))
-    result = c.fetchone()
-    return result[0] if result else 0
+    with sqlite3.connect('dander.db') as conn:
+        c = conn.cursor()
+        c.execute('''SELECT distance FROM users WHERE name=?''', (name,))
+        result = c.fetchone()
+        return result[0] if result else 0
 
 ################################## FUNCTIONS ##################################
 
 # Submit button
 def update_distances():
     try:
-        user1_new_distance = float(user1_input.get())
-        user2_new_distance = float(user2_input.get())
+        user1_new_distance = float(user1_input.get() or 0)
+        user2_new_distance = float(user2_input.get() or 0)
 
         # Get current distance
         current_user1_distance = get_distance("Rebecca")
@@ -44,13 +51,16 @@ def update_distances():
         new_user1_distance = current_user1_distance + user1_new_distance
         new_user2_distance = current_user2_distance + user2_new_distance
 
-        # Update the labels with new distances
-        user1_distance.config(text=f"{new_user1_distance} km")
-        user2_distance.config(text=f"{new_user2_distance} km")
+        print(f'new user1: {new_user1_distance}')
+        print(f'new user1: {new_user2_distance}')
 
         # Store the updated distances in the database
         store_distance("Rebecca", new_user1_distance)
         store_distance("Raymond", new_user2_distance)
+
+        # Update the labels with new distances
+        user1_distance.config(text=f"{new_user1_distance} km")
+        user2_distance.config(text=f"{new_user2_distance} km")
 
         # Clear input fields
         user1_input.delete(0, tk.END)
@@ -124,7 +134,24 @@ def update_map_path(total_distance_walked):
     # Plot the traveled path (in green)
     map_view.set_path(traveled_coords, color="green")
 
+# Reset all distances in the database to 0
+def reset_distances():
+    with sqlite3.connect('dander.db') as conn:
+        c = conn.cursor()
+        c.execute('UPDATE users SET distance = 0')  # Reset all distances to 0
+        conn.commit()
+    
+    # Update the displayed values in the GUI
+    user1_distance.config(text="0 km")
+    user2_distance.config(text="0 km")
+
+    # Reset the map to remove the green path
+    map_view.delete_all_path()
+    map_view.set_path(trail_coords, color='red')  # Replot the original red trail
+
 ################################## MAIN LOOP ##################################
+
+# Initiating SQLite database at start of program
 
 # Initialize the database
 init_db()
@@ -162,6 +189,7 @@ user2_distance.grid(row=3, column=1, sticky="E")
 
 # Input for daily distances
 ttk.Label(sidebar, text="Add Daily Distance").grid(row=4, column=0, pady=20, sticky="W")
+
 ttk.Label(sidebar, text="Rebecca:").grid(row=5, column=0, sticky="W")
 user1_input = ttk.Entry(sidebar, width=10)
 user1_input.grid(row=5, column=1, sticky="E")
@@ -169,8 +197,6 @@ user1_input.grid(row=5, column=1, sticky="E")
 ttk.Label(sidebar, text="Raymond:").grid(row=6, column=0, sticky="W")
 user2_input = ttk.Entry(sidebar, width=10)
 user2_input.grid(row=6, column=1, sticky="E")
-
-ttk.Button(sidebar, text="Update Distances", command=update_distances).grid(row=7, column=0, columnspan=2, pady=10)
 
 # Generate Map
 map_view = tkintermapview.TkinterMapView(map_area, width=600, height=600, corner_radius=0)
@@ -192,6 +218,8 @@ map_view.pack(expand=True, fill="both")
 # On startup, load the saved distances for both users
 user1_distance_value = get_distance('Rebecca')
 user2_distance_value = get_distance('Raymond')
+print(user1_distance_value)
+print(user2_distance_value)
 
 user1_distance.config(text=f"{user1_distance_value} km")
 user2_distance.config(text=f"{user2_distance_value} km")
@@ -203,8 +231,9 @@ if user1_distance_value > 0:
 if user2_distance_value > 0:
     update_map_path(user2_distance_value)  # For Raymond
 
+ttk.Button(sidebar, text="Update Distances", command=update_distances).grid(row=7, column=0, columnspan=2, pady=10)
+ttk.Button(sidebar, text="Reset", command=reset_distances).grid(row=9, column=0, columnspan=2, pady=10)
+
+
 # Run the app
 root.mainloop()
-
-# Close SQLite db
-conn.close()
