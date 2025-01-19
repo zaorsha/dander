@@ -157,7 +157,7 @@ trail_coords = load_gpx("appalachian_trail_path.gpx")
 map_view.set_path(trail_coords, color='red')
 
 # Set zoom level
-map_view.set_zoom(13)
+map_view.set_zoom(11)
 
 # Function to update the path with green for the user's progress
 def update_map_path(total_distance_walked):

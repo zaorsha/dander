@@ -14,7 +14,7 @@ Virtual walking app
 
 ### Known Bugs
 ---
-1. Adding distance only works the first time within the distance stats. Subsequent additions act unexpectedly.
+1. The maths of adding distance only works the first 2 times. Subsequent additions work unexpectedly.
 3. Only the initial distance added is committed to the db
 
 
