@@ -4,8 +4,10 @@ import tkintermapview
 import gpxpy
 import math
 
+from d_sqlite import init_db, store_distance, get_distance
+
 # Submit button
-def update_distances():
+def update_distances(user1_input, user2_input, user1_distance, user2_distance):
     try:
         user1_new_distance = float(user1_input.get() or 0)
         user2_new_distance = float(user2_input.get() or 0)
@@ -31,7 +33,7 @@ def update_distances():
         user2_input.delete(0, tk.END)
 
         # Update the map with the new progress
-        update_map_path(new_user1_distance)  # For Rebecca
+        update_map_path(new_user1_distance, trail_coords, map_view)  # For Rebecca
         update_map_path(new_user2_distance)  # For Raymond
 
     except ValueError:
@@ -74,7 +76,7 @@ def load_gpx(file_path):
     return trail_coords
 
 # Function to update the path with green for the user's progress
-def update_map_path(total_distance_walked):
+def update_map_path(total_distance_walked, trail_coords, map_view):
     traveled_coords = []
     distance_traveled = 0
 
@@ -99,7 +101,7 @@ def update_map_path(total_distance_walked):
     map_view.set_path(traveled_coords, color="green")
 
 # Reset all distances in the database to 0
-def reset_distances():
+def reset_distances(user1_distance, user2_distance, map_view):
     with sqlite3.connect('dander.db') as conn:
         c = conn.cursor()
         c.execute('UPDATE users SET distance = 0')  # Reset all distances to 0

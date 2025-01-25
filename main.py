@@ -6,7 +6,7 @@ import math
 import sqlite3
 
 from d_sqlite import init_db, store_distance, get_distance
-from d_funcs import update_distances, haversine, load_gpx, update_map_path, reset_distances, 
+from d_funcs import update_distances, haversine, load_gpx, update_map_path, reset_distances
 
 # Initialize the database
 init_db()
@@ -79,13 +79,17 @@ user2_distance.config(text=f"{user2_distance_value} km")
 
 # Update the map with the user's progress based on stored distances
 if user1_distance_value > 0:
-    update_map_path(user1_distance_value)  # For Rebecca
+    update_map_path(user1_distance_value, trail_coords, map_view)  # For Rebecca
 
 if user2_distance_value > 0:
-    update_map_path(user2_distance_value)  # For Raymond
+    update_map_path(user2_distance_value, trail_coords, map_view)  # For Raymond
 
-ttk.Button(sidebar, text="Update Distances", command=update_distances).grid(row=7, column=0, columnspan=2, pady=10)
-ttk.Button(sidebar, text="Reset", command=reset_distances).grid(row=9, column=0, columnspan=2, pady=10)
+ttk.Button(sidebar, text="Update Distances", 
+           command=lambda: update_distances(user1_input, user2_input, user1_distance, user2_distance)
+           ).grid(row=7, column=0, columnspan=2, pady=10)
+ttk.Button(sidebar, text="Reset", 
+           command=lambda: reset_distances(user1_distance, user2_distance, map_view)
+           ).grid(row=9, column=0, columnspan=2, pady=10)
 
 # Run the app
 root.mainloop()
